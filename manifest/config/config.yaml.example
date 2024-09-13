@@ -1,0 +1,16 @@
+server:
+  address:     ":8000"
+  openapiPath: "/api.json"
+  swaggerPath: "/swagger"
+
+logger:
+  level : "all"
+  stdout: true
+  path:   "logs"
+
+openai:
+  baseUrl: ""
+  apiKey: ""
+  model: "gpt-3.5-turbo"
+
+
