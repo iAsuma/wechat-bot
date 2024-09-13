@@ -25,7 +25,9 @@ func (l *lMessageLogic) FriendText(msgCtx *openwechat.MessageContext) {
 
 	go func() {
 		replyContent := service.NewOpenAiService().Chat(msgCtx.Context(), inputText)
-		msg.ReplyText(replyContent)
+		if replyContent != "" {
+			msg.ReplyText(replyContent)
+		}
 	}()
 }
 
@@ -66,7 +68,9 @@ func (l *lMessageLogic) GroupText(msgCtx *openwechat.MessageContext) {
 
 		go func() {
 			replyContent := service.NewOpenAiService().Chat(msgCtx.Context(), inputText)
-			msg.ReplyText(replyContent)
+			if replyContent != "" {
+				msg.ReplyText(replyContent)
+			}
 		}()
 		return
 	}
