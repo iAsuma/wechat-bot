@@ -1,4 +1,3 @@
-# GoFrame Template For SingleRepo
+# 微信机器人
 
-Quick Start: 
-- https://goframe.org/pages/viewpage.action?pageId=1114399
+AI、客服、智能回复
