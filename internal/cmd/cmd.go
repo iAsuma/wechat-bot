@@ -46,17 +46,8 @@ var (
 				return
 			}
 
-			// 创建消息处理中心
-			dispatcher := openwechat.NewMessageMatchDispatcher()
-			dispatcher.OnText(handler.Message().OnText)
-			//dispatcher.OnImage(handler.Message().OnImage)
-			//dispatcher.OnEmoticon(handler.Message().OnEmoticon)
-			dispatcher.OnVoice(handler.Message().OnVoice)
-			dispatcher.OnFriend(handler.Message().OnFriend)
-			dispatcher.OnGroup(handler.Message().OnGroup)
-
 			// 注册消息回调函数
-			bot.MessageHandler = dispatcher.AsMessageHandler()
+			bot.MessageHandler = handler.Message().Listen()
 
 			// 阻塞主goroutine, 直到发生异常或者用户主动退出
 			bot.Block()

@@ -7,38 +7,52 @@ import (
 	"wechatbot/internal/logic"
 )
 
-type MessageHandler struct{}
+type messageHandler struct{}
 
-func Message() *MessageHandler {
-	return &MessageHandler{}
+func Message() *messageHandler {
+	return &messageHandler{}
 }
 
-func (c *MessageHandler) OnText(msgCtx *openwechat.MessageContext) {
+func (h *messageHandler) Listen() openwechat.MessageHandler {
+	dispatcher := openwechat.NewMessageMatchDispatcher()
+
+	// 创建消息处理中心
+	dispatcher.OnText(h.OnText)
+	dispatcher.OnImage(h.OnImage)
+	dispatcher.OnEmoticon(h.OnEmoticon)
+	dispatcher.OnVoice(h.OnVoice)
+	dispatcher.OnFriend(h.OnFriend)
+	dispatcher.OnGroup(h.OnGroup)
+
+	return dispatcher.AsMessageHandler()
+}
+
+func (h *messageHandler) OnText(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 	g.Log().Info(msgCtx.Context(), "OnText", msg.Content)
 
 	return
 }
 
-func (c *MessageHandler) OnImage(msgCtx *openwechat.MessageContext) {
+func (h *messageHandler) OnImage(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 	fmt.Println("OnImage: ", msg.Content)
 	return
 }
 
-func (c *MessageHandler) OnEmoticon(msgCtx *openwechat.MessageContext) {
+func (h *messageHandler) OnEmoticon(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 	fmt.Println("OnEmoticon: ", msg.RawContent)
 	return
 }
 
-func (c *MessageHandler) OnVoice(msgCtx *openwechat.MessageContext) {
+func (h *messageHandler) OnVoice(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 	fmt.Println("OnVoice: ", msg.Content)
 	return
 }
 
-func (c *MessageHandler) OnFriend(msgCtx *openwechat.MessageContext) {
+func (h *messageHandler) OnFriend(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 	fmt.Println("OnFriend: ", msg.Content)
 	msg.AsRead()
@@ -50,7 +64,7 @@ func (c *MessageHandler) OnFriend(msgCtx *openwechat.MessageContext) {
 	return
 }
 
-func (c *MessageHandler) OnGroup(msgCtx *openwechat.MessageContext) {
+func (h *messageHandler) OnGroup(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 
 	if msg.StatusNotify() {
