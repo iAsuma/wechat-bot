@@ -7,6 +7,8 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"wechatbot/internal/handler"
+	"wechatbot/internal/service"
+	"wechatbot/internal/wechatbot"
 
 	"wechatbot/internal/controller/bot"
 )
@@ -41,6 +43,10 @@ var (
 
 			bot := openwechat.DefaultBot(openwechat.Desktop) // 桌面模式
 
+			// 心跳回调函数
+			bot.SyncCheckCallback = handler.Bot().HealCheckCallback
+
+			// 登录
 			if err = bot.HotLogin(reloadStorage, openwechat.NewRetryLoginOption()); err != nil {
 				g.Log().Error(ctx, err)
 				return
@@ -49,8 +55,15 @@ var (
 			// 注册消息回调函数
 			bot.MessageHandler = handler.Message().Listen()
 
+			// 设置登录用户到全局
+			self, _ := bot.GetCurrentUser()
+			wechatbot.SetBotNickName(self.NickName)
+
 			// 阻塞主goroutine, 直到发生异常或者用户主动退出
-			bot.Block()
+			err = bot.Block()
+			if err != nil {
+				_ = service.NewEmail().Send(ctx, "WX-Bot 系统故障", "bot error: "+err.Error())
+			}
 			return nil
 		},
 	}

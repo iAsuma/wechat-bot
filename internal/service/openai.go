@@ -10,13 +10,13 @@ import (
 
 type lOpenAiService struct{}
 
-func NewOpenAiService() *lOpenAiService {
+func NewOpenAi() *lOpenAiService {
 	return &lOpenAiService{}
 }
 
 func (l *lOpenAiService) Chat(ctx context.Context, inputText string) string {
 
-	config, err := g.Cfg().Get(ctx, "openai")
+	config, err := g.Cfg().GetWithEnv(ctx, "openai")
 	if config.IsNil() || err != nil {
 		return ""
 	}

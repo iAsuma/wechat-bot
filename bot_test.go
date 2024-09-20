@@ -4,21 +4,91 @@ import (
 	"context"
 	"fmt"
 	"github.com/eatmoreapple/openwechat"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/sashabaranov/go-openai"
-	"os"
+	"net/smtp"
 	"strings"
 	"testing"
+	"wechatbot/internal/service"
 )
 
-func TestAny(t *testing.T) {
-	f, err := os.Open("storage.json")
-	if err != nil {
-		fmt.Println(err)
-		return
+func MergeSlice(s1 []string, s2 []string) []string {
+	slice := make([]string, len(s1)+len(s2))
+	copy(slice, s1)
+	copy(slice[len(s1):], s2)
+	return slice
+}
+
+func SendToMail(user, password, host, subject, date, body, mailtype, replyToAddress string, to []string) error {
+	hp := strings.Split(host, ":")
+	auth := smtp.PlainAuth("", user, password, hp[0])
+	var contentType string
+	if mailtype == "html" {
+		contentType = "Content-Type: text/" + mailtype + "; charset=UTF-8"
+	} else {
+		contentType = "Content-Type: text/plain" + "; charset=UTF-8"
 	}
-	defer f.Close()
-	fmt.Println(f)
+
+	//ccAddress := strings.Join(cc, ";")
+	//bccAddress := strings.Join(bcc, ";")
+	toAddress := strings.Join(to, ";")
+
+	content := `From: "{username}" <{user}>
+To: "{toname}" <{toAddress}>
+Subject: {subject}
+Date: {date}
+{contentType}
+
+{body}`
+
+	content = gstr.ReplaceByMap(content, g.MapStrStr{
+		"{user}":        user,
+		"{username}":    "WechatBot",
+		"{toAddress}":   toAddress,
+		"{toname}":      "Asuma",
+		"{subject}":     subject,
+		"{date}":        date,
+		"{contentType}": contentType,
+		"{body}":        body,
+	})
+
+	//fmt.Println("content", content)
+
+	//msg := []byte("To: " + toAddress + "\r\nFrom: " + user + "\r\nSubject: " + subject + "\r\nDate: " + date + "\r\nReply-To: " + replyToAddress + "\r\n" + contentType + "\r\n\r\n" + body)
+
+	//fmt.Println("msg1", "To: "+toAddress+"\r\nFrom: "+user+"\r\nSubject: "+subject+"\r\nDate: "+date+"\r\nReply-To: "+replyToAddress+"\r\n"+contentType+"\r\n\r\n"+body)
+
+	msg := []byte(content)
+	//fmt.Println("msg2", content)
+	//sendTo := MergeSlice(to, cc)
+	//sendTo = MergeSlice(sendTo, bcc)
+	err := smtp.SendMail(host, auth, user, to, msg)
+	return err
+}
+
+func TestAny(t *testing.T) {
+	//user := "770878450@qq.com"
+	//password := "ghyqosxpinkbbdbi"
+	//host := "smtp.qq.com:587"
+	//to := []string{"sqiu_li@163.com"}
+	////var cc []string
+	////var bcc []string
+	subject := "WX-bot系统故障"
+	//date := fmt.Sprintf("%s", time.Now().Format(time.RFC1123Z))
+	//mailtype := "html"
+	//replyToAddress := "251025241@qq.com"
+	body := "<html><body><h3>请勿回复520132</h3></body></html>"
+	//fmt.Println("send email")
+	//err := SendToMail(user, password, host, subject, date, body, mailtype, replyToAddress, to)
+	//if err != nil {
+	//	fmt.Println("Send mail error!", err)
+	//} else {
+	//	fmt.Println("Send mail success!")
+	//}
+
+	service.NewEmail().Send(gctx.New(), subject, body)
 }
 
 func TestMainTest(t *testing.T) {
@@ -156,4 +226,21 @@ func openAi(ctx context.Context, inputText string) string {
 	fmt.Println(resp.Choices[0].Message.Content)
 
 	return resp.Choices[0].Message.Content
+}
+
+func sendEmail(addrSMTP string, from string, to []string, subject string, body string) error {
+	auth := smtp.PlainAuth("", "770878450@qq.com", "your_password", "smtp.gmail.com")
+	email := "your_email@qq.com" // sender email
+
+	// Create the message
+	msg := "From: " + from + "\r\nTo: " + to[0] + "\r\nSubject: " + subject + "\r\n\r\n" + body
+
+	// send email
+	err := smtp.SendMail(addrSMTP, auth, email, to, []byte(msg))
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Email success sent...\n")
+
+	return nil
 }

@@ -5,3 +5,12 @@ type OpenConfig struct {
 	ApiKey  string
 	Model   string
 }
+
+type EmailConfig struct {
+	Host     string
+	Port     string
+	From     string
+	To       string
+	UserName string
+	Password string
+}

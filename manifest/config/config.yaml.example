@@ -13,4 +13,10 @@ openai:
   apiKey: ""
   model: "gpt-3.5-turbo"
 
-
+email:
+  host: "smtp.qq.com"
+  port: 587
+  from: ""
+  to: ""
+  username: ""
+  password: ""
