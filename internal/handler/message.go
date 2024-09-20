@@ -7,13 +7,13 @@ import (
 	"wechatbot/internal/logic"
 )
 
-type messageHandler struct{}
+type MessageHandler struct{}
 
-func Message() *messageHandler {
-	return &messageHandler{}
+func Message() *MessageHandler {
+	return &MessageHandler{}
 }
 
-func (h *messageHandler) Listen() openwechat.MessageHandler {
+func (h *MessageHandler) Listen() openwechat.MessageHandler {
 	dispatcher := openwechat.NewMessageMatchDispatcher()
 
 	// 创建消息处理中心
@@ -27,32 +27,32 @@ func (h *messageHandler) Listen() openwechat.MessageHandler {
 	return dispatcher.AsMessageHandler()
 }
 
-func (h *messageHandler) OnText(msgCtx *openwechat.MessageContext) {
+func (h *MessageHandler) OnText(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 	g.Log().Info(msgCtx.Context(), "OnText", msg.Content)
 
 	return
 }
 
-func (h *messageHandler) OnImage(msgCtx *openwechat.MessageContext) {
+func (h *MessageHandler) OnImage(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 	fmt.Println("OnImage: ", msg.Content)
 	return
 }
 
-func (h *messageHandler) OnEmoticon(msgCtx *openwechat.MessageContext) {
+func (h *MessageHandler) OnEmoticon(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 	fmt.Println("OnEmoticon: ", msg.RawContent)
 	return
 }
 
-func (h *messageHandler) OnVoice(msgCtx *openwechat.MessageContext) {
+func (h *MessageHandler) OnVoice(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 	fmt.Println("OnVoice: ", msg.Content)
 	return
 }
 
-func (h *messageHandler) OnFriend(msgCtx *openwechat.MessageContext) {
+func (h *MessageHandler) OnFriend(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 	fmt.Println("OnFriend: ", msg.Content)
 	msg.AsRead()
@@ -64,7 +64,7 @@ func (h *messageHandler) OnFriend(msgCtx *openwechat.MessageContext) {
 	return
 }
 
-func (h *messageHandler) OnGroup(msgCtx *openwechat.MessageContext) {
+func (h *MessageHandler) OnGroup(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 
 	if msg.StatusNotify() {
