@@ -8,6 +8,10 @@ logger:
   stdout: true
   path:   "logs"
 
+redis:
+  default:
+    address: "127.0.0.1:6379"
+
 openai:
   baseUrl: ""
   apiKey: ""
@@ -18,5 +22,4 @@ email:
   port: 587
   from: ""
   to: ""
-  username: ""
   password: ""

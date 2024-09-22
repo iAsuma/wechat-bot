@@ -2,7 +2,6 @@ package qmail
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/text/gstr"
 	"net/smtp"
 	"strings"
@@ -78,8 +77,7 @@ func (e *Email) SendMail() error {
 		"{contentType}": e.Msg.ContentType,
 		"{body}":        e.Msg.Body,
 	})
-	//fmt.Println("msg", content)
-	g.Log().Stdout(false).Info(gctx.GetInitCtx(), "msg", content)
+
 	msg := []byte(content)
 
 	err := smtp.SendMail(e.Host+":"+e.Port, e.Auth, e.From.Email, to, msg)

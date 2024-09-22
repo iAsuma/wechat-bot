@@ -13,4 +13,3 @@ type ControllerV1 struct{}
 func NewV1() bot.IBotV1 {
 	return &ControllerV1{}
 }
-

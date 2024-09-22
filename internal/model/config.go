@@ -11,6 +11,5 @@ type EmailConfig struct {
 	Port     string
 	From     string
 	To       string
-	UserName string
 	Password string
 }

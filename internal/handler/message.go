@@ -31,6 +31,15 @@ func (h *MessageHandler) OnText(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 	g.Log().Info(msgCtx.Context(), "OnText", msg.Content)
 
+	send, _ := msg.Sender()
+	fmt.Println("send", send.NickName, send.UserName, send.DisplayName, send.ID(), send.Uin, "#")
+
+	sgr, err := msg.SenderInGroup()
+	if err != nil {
+		return
+	}
+	fmt.Println("sgr", sgr.NickName, sgr.UserName, sgr.DisplayName, sgr.ID(), sgr.Uin, "#")
+
 	return
 }
 
@@ -58,7 +67,7 @@ func (h *MessageHandler) OnFriend(msgCtx *openwechat.MessageContext) {
 	msg.AsRead()
 
 	if msg.IsText() {
-		logic.Message.FriendText(msgCtx)
+		logic.Message().FriendText(msgCtx)
 	}
 
 	return
@@ -73,7 +82,7 @@ func (h *MessageHandler) OnGroup(msgCtx *openwechat.MessageContext) {
 	msg.AsRead()
 
 	if msg.IsText() {
-		logic.Message.GroupText(msgCtx)
+		logic.Message().GroupText(msgCtx)
 	}
 
 	return

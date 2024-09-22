@@ -11,7 +11,6 @@ import (
 	"net/smtp"
 	"strings"
 	"testing"
-	"wechatbot/internal/service"
 )
 
 func MergeSlice(s1 []string, s2 []string) []string {
@@ -68,27 +67,15 @@ Date: {date}
 	return err
 }
 
-func TestAny(t *testing.T) {
-	//user := "770878450@qq.com"
-	//password := "ghyqosxpinkbbdbi"
-	//host := "smtp.qq.com:587"
-	//to := []string{"sqiu_li@163.com"}
-	////var cc []string
-	////var bcc []string
-	subject := "WX-bot系统故障"
-	//date := fmt.Sprintf("%s", time.Now().Format(time.RFC1123Z))
-	//mailtype := "html"
-	//replyToAddress := "251025241@qq.com"
-	body := "<html><body><h3>请勿回复520132</h3></body></html>"
-	//fmt.Println("send email")
-	//err := SendToMail(user, password, host, subject, date, body, mailtype, replyToAddress, to)
-	//if err != nil {
-	//	fmt.Println("Send mail error!", err)
-	//} else {
-	//	fmt.Println("Send mail success!")
-	//}
+func Ted() []string {
+	return nil
+}
 
-	service.NewEmail().Send(gctx.New(), subject, body)
+func TestAny(t *testing.T) {
+
+	fmt.Println(g.Redis().Do(gctx.GetInitCtx(), "GET", "4398ffaf53d3e2adfe69503f6f68ef3b"))
+	b, err := g.Redis().Do(gctx.GetInitCtx(), "EXISTS", "4398ffaf53d3e2adfe69503f6f68ef3b")
+	fmt.Println(b.Bool(), err)
 }
 
 func TestMainTest(t *testing.T) {
