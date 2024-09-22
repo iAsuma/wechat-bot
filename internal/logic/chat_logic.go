@@ -31,8 +31,6 @@ func (l *lChatLogic) AiReply(msgCtx *openwechat.MessageContext, msgContent ...st
 		Content: msgContent[0],
 	})
 
-	fmt.Println("chatData", chatData, chatData == nil)
-
 	replyContent := service.NewOpenAi().Chat(msgCtx.Context(), chatData)
 	if replyContent == "" {
 		return

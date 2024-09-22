@@ -6,11 +6,14 @@ import (
 	"github.com/eatmoreapple/openwechat"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
+	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/os/gtimer"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/sashabaranov/go-openai"
 	"net/smtp"
 	"strings"
 	"testing"
+	"time"
 )
 
 func MergeSlice(s1 []string, s2 []string) []string {
@@ -72,10 +75,20 @@ func Ted() []string {
 }
 
 func TestAny(t *testing.T) {
+	go tTime()
+	select {}
+}
 
-	fmt.Println(g.Redis().Do(gctx.GetInitCtx(), "GET", "4398ffaf53d3e2adfe69503f6f68ef3b"))
-	b, err := g.Redis().Do(gctx.GetInitCtx(), "EXISTS", "4398ffaf53d3e2adfe69503f6f68ef3b")
-	fmt.Println(b.Bool(), err)
+func tTime() {
+	var (
+		ctx = gctx.New()
+		//now = time.Now()
+	)
+	gtimer.SetTimeout(ctx, time.Second*3, func(ctx context.Context) {
+		fmt.Println("SetTimeout:", gtime.Now())
+	})
+
+	fmt.Println("ddd")
 }
 
 func TestMainTest(t *testing.T) {
