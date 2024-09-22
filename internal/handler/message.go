@@ -34,13 +34,6 @@ func (h *MessageHandler) Listen() openwechat.MessageHandler {
 func (h *MessageHandler) OnText(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 	g.Log().Info(msgCtx.Context(), "OnText", msg.Content)
-
-	send, _ := msg.Sender()
-	fmt.Println("send", send.NickName, send.UserName, send.DisplayName, send.ID(), send.Uin, send.RemarkName, send.RemarkPYQuanPin, send.RemarkPYInitial, "#")
-
-	rec, _ := msg.Receiver()
-	fmt.Println("rec", rec.NickName, rec.UserName, rec.DisplayName, rec.ID(), rec.Uin, rec.RemarkName, rec.RemarkPYQuanPin, rec.RemarkPYInitial, "#")
-
 	return
 }
 
@@ -91,7 +84,6 @@ func (h *MessageHandler) OnGroup(msgCtx *openwechat.MessageContext) {
 
 func (h *MessageHandler) OnFriendAdd(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
-	fmt.Println("OnFriendAdd: ", msg.Content)
 
 	gtimer.SetTimeout(msg.Context(), time.Second*5, func(ctx context.Context) {
 		msg.Agree("现在可以开始跟我AI对话了")
