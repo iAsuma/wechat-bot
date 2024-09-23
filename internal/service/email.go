@@ -37,9 +37,9 @@ func (l *lEmailService) Send(ctx context.Context, subject, body string) error {
 		},
 	}
 	email.Msg = qmail.Paper{
-		Body:    body,
-		Subject: subject,
-		//ContentType: "Content-Type: text/html; charset=UTF-8",
+		Body:        body,
+		Subject:     subject,
+		ContentType: "Content-Type: text/html; charset=UTF-8",
 	}
 
 	err = email.SendMail()
