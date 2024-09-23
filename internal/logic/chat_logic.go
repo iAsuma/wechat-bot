@@ -37,9 +37,9 @@ func (l *lChatLogic) Reply(msgCtx *openwechat.MessageContext, msgContent string)
 		if msgLen < 10 && diffSeconds < 3 {
 			maxT = int64(grand.N(3, 5))
 		} else if msgLen >= 10 && msgLen < 100 && diffSeconds < 5 {
-			maxT = int64(grand.N(6, 10))
-		} else if msgLen >= 100 && diffSeconds < 10 {
-			maxT = int64(grand.N(10, 15))
+			maxT = int64(grand.N(5, 8))
+		} else if msgLen >= 100 && diffSeconds < 8 {
+			maxT = int64(grand.N(8, 12))
 		} else {
 			maxT = 1
 		}
