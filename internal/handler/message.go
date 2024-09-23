@@ -6,7 +6,9 @@ import (
 	"github.com/eatmoreapple/openwechat"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtimer"
+	"github.com/golang-module/carbon/v2"
 	"time"
+	"wechatbot/internal/consts"
 	"wechatbot/internal/logic"
 )
 
@@ -20,6 +22,9 @@ func (h *MessageHandler) Listen() openwechat.MessageHandler {
 	dispatcher := openwechat.NewMessageMatchDispatcher()
 
 	// 创建消息处理中心
+	dispatcher.RegisterHandler(func(message *openwechat.Message) bool {
+		return true
+	}, h.OnAny) // 该handler放在第一个位置，保证所有消息都先被处理
 	dispatcher.OnText(h.OnText)
 	dispatcher.OnImage(h.OnImage)
 	dispatcher.OnEmoticon(h.OnEmoticon)
@@ -29,6 +34,10 @@ func (h *MessageHandler) Listen() openwechat.MessageHandler {
 	dispatcher.OnFriendAdd(h.OnFriendAdd)
 
 	return dispatcher.AsMessageHandler()
+}
+
+func (h *MessageHandler) OnAny(msgCtx *openwechat.MessageContext) {
+	msgCtx.Message.Set(consts.MsgGetStartTimeKey, carbon.Now())
 }
 
 func (h *MessageHandler) OnText(msgCtx *openwechat.MessageContext) {
@@ -85,7 +94,7 @@ func (h *MessageHandler) OnGroup(msgCtx *openwechat.MessageContext) {
 func (h *MessageHandler) OnFriendAdd(msgCtx *openwechat.MessageContext) {
 	msg := msgCtx.Message
 
-	gtimer.SetTimeout(msg.Context(), time.Second*5, func(ctx context.Context) {
+	gtimer.SetTimeout(msg.Context(), time.Second*8, func(ctx context.Context) {
 		msg.Agree("现在可以开始跟我AI对话了")
 	})
 }

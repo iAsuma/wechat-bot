@@ -18,7 +18,7 @@ func (l *lMessageLogic) FriendText(msgCtx *openwechat.MessageContext) {
 	inputText := gstr.Trim(msg.Content)
 
 	if gstr.LenRune(inputText) < 3 {
-		msg.ReplyText("少于3个字不会进行AI智能回答")
+		Chat().Reply(msgCtx, "少于3个字不会进行AI智能回答")
 		return
 	}
 
@@ -57,7 +57,7 @@ func (l *lMessageLogic) GroupText(msgCtx *openwechat.MessageContext) {
 				senderName = sendInGroup.NickName
 			}
 			replyText := fmt.Sprintf("@%s 少于3个字不会进行AI智能回答", senderName)
-			msg.ReplyText(replyText)
+			Chat().Reply(msgCtx, replyText)
 			return
 		}
 

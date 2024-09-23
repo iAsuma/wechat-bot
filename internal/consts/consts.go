@@ -1,6 +1,8 @@
 package consts
 
-const ErrorEmail = `<!DOCTYPE html>
+const MsgGetStartTimeKey = "msgGetStartTime"
+
+const NoticeEmail = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">

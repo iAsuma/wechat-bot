@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"github.com/gogf/gf/v2/frame/g"
 	"wechatbot/internal/model"
 	"wechatbot/internal/service/qmail"
@@ -16,6 +15,7 @@ func NewEmail() *lEmailService {
 }
 
 func (l *lEmailService) Send(ctx context.Context, subject, body string) error {
+	noticeBody := qmail.NoticeContent(body)
 
 	config, err := g.Cfg().GetWithEnv(ctx, "email")
 	if config.IsNil() || err != nil {
@@ -25,11 +25,14 @@ func (l *lEmailService) Send(ctx context.Context, subject, body string) error {
 	_ = config.Struct(&emailConfig)
 
 	userName := wechatbot.GetBotNickName()
+	if userName == "" {
+		userName = "WX机器人"
+	}
 
 	email := qmail.NewEmail(emailConfig.Host, emailConfig.Port, emailConfig.From, emailConfig.Password)
 	email.From = qmail.Sender{
 		Email: emailConfig.From,
-		Name:  userName + "(WX机器人)",
+		Name:  userName,
 	}
 	email.To = []qmail.Receiver{
 		{
@@ -37,16 +40,16 @@ func (l *lEmailService) Send(ctx context.Context, subject, body string) error {
 		},
 	}
 	email.Msg = qmail.Paper{
-		Body:        body,
+		Body:        noticeBody,
 		Subject:     subject,
 		ContentType: "Content-Type: text/html; charset=UTF-8",
 	}
 
 	err = email.SendMail()
 	if err != nil {
-		fmt.Println("Send mail error!", err)
+		g.Log().Info(ctx, "Send mail error!", err)
 	} else {
-		fmt.Println("Send mail success!")
+		g.Log().Info(ctx, "Send mail success!")
 	}
 
 	return err

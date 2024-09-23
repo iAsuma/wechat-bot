@@ -1,13 +1,19 @@
 package logic
 
 import (
+	"context"
 	"fmt"
 	"github.com/eatmoreapple/openwechat"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtimer"
+	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/grand"
+	"github.com/golang-module/carbon/v2"
 	"github.com/sashabaranov/go-openai"
 	"time"
+	"wechatbot/internal/consts"
 	"wechatbot/internal/model"
 	"wechatbot/internal/service"
 )
@@ -18,6 +24,35 @@ func Chat() *lChatLogic {
 	return &lChatLogic{}
 }
 
+// Reply 延迟回复，防封号（可能起作用）
+func (l *lChatLogic) Reply(msgCtx *openwechat.MessageContext, msgContent string) {
+	msgGetStartTime, exist := msgCtx.Message.Get(consts.MsgGetStartTimeKey)
+	var timeCan time.Duration = 3
+
+	if exist {
+		msgLen := gstr.LenRune(msgContent)
+		diffSeconds := msgGetStartTime.(carbon.Carbon).DiffInSeconds()
+		var maxT int64 = 1
+
+		if msgLen < 10 && diffSeconds < 3 {
+			maxT = int64(grand.N(3, 5))
+		} else if msgLen >= 10 && msgLen < 100 && diffSeconds < 5 {
+			maxT = int64(grand.N(6, 10))
+		} else if msgLen >= 100 && diffSeconds < 10 {
+			maxT = int64(grand.N(10, 15))
+		} else {
+			maxT = 1
+		}
+
+		timeCan = time.Duration(maxT - diffSeconds)
+	}
+
+	gtimer.SetTimeout(msgCtx.Context(), time.Second*timeCan, func(ctx context.Context) {
+		msgCtx.Message.ReplyText(msgContent)
+	})
+}
+
+// AiReply AIh回复
 func (l *lChatLogic) AiReply(msgCtx *openwechat.MessageContext, msgContent ...string) {
 	var chatData []model.ChatMessage
 
@@ -36,7 +71,8 @@ func (l *lChatLogic) AiReply(msgCtx *openwechat.MessageContext, msgContent ...st
 		return
 	}
 
-	msgCtx.ReplyText(replyContent)
+	l.Reply(msgCtx, replyContent)
+
 	chatData = append(chatData, model.ChatMessage{
 		Role:    openai.ChatMessageRoleAssistant,
 		Content: replyContent,

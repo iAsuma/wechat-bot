@@ -3,6 +3,9 @@ server:
   openapiPath: "/api.json"
   swaggerPath: "/swagger"
 
+app:
+  env: "prod"
+
 logger:
   level : "all"
   stdout: true

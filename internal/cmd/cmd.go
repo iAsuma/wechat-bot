@@ -41,10 +41,23 @@ var (
 			reloadStorage := openwechat.NewFileHotReloadStorage("storage.json")
 			defer reloadStorage.Close()
 
-			bot := openwechat.DefaultBot(openwechat.Desktop) // 桌面模式
+			bot := openwechat.DefaultBot(openwechat.WithContextOption(ctx), openwechat.Desktop) // 桌面模式
+			ctx = bot.Context()
+
+			// 生成登录二维码
+			bot.UUIDCallback = func(uuid string) {
+				handler.Bot().LoginQrcodeUrl(ctx, uuid)
+			}
+
+			// 登录回调
+			bot.LoginCallBack = func(resp openwechat.CheckLoginResponse) {
+				handler.Bot().LoginCallBack(ctx, bot, resp)
+			}
 
 			// 心跳回调函数
-			bot.SyncCheckCallback = handler.Bot().HealCheckCallback
+			bot.SyncCheckCallback = func(resp openwechat.SyncCheckResponse) {
+				handler.Bot().HealCheckCallback(ctx, resp)
+			}
 
 			// 登录
 			if err = bot.HotLogin(reloadStorage, openwechat.NewRetryLoginOption()); err != nil {

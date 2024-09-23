@@ -7,8 +7,8 @@ import (
 	"wechatbot/internal/consts"
 )
 
-func ErrorContent(msg string) string {
-	body := consts.ErrorEmail
+func NoticeContent(msg string) string {
+	body := consts.NoticeEmail
 
 	bodyStr := gstr.ReplaceByMap(body, g.MapStrStr{
 		"{GEN_TIME}":     gtime.Now().String(),
